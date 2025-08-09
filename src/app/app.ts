@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('products-order-ui');
+  protected readonly title = signal('products-order-ui in 2 hours or you get your money back');
 }

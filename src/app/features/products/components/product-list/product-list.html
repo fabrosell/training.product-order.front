@@ -1,0 +1,21 @@
+<h2>{{ title() }}</h2>
+
+@defer (on idle) {
+    @if (products().length > 0) {
+        <p>Total Products: {{ productCount() }}</p>
+        <ul>
+            @for (product of products(); track product.id) {
+                <li>
+                    {{ product.name }} - {{ product.price | number:'1.2-2'}}
+                </li>
+            }
+
+        </ul>
+    } @else {
+        <p>No products were found.</p>
+    }
+} @placeholder {
+    <div class="placeholder">Product List will be shown here.</div>
+} @loading (minimum 500ms){
+    <p>Loading product list...</p>
+}
