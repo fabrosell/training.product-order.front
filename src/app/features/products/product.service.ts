@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { Product } from './product.model';
 import { environment } from '../../../environments/environment';
 
@@ -28,5 +28,16 @@ export class ProductService {
 
   deleteProduct(id: number) : Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  checkNameExists(name: string, excludeId?: number): Observable<boolean> {
+    let params = new HttpParams().set('name', name);
+
+    if (excludeId)
+        params = params.set('excludeId', excludeId.toString());
+
+    return this.http
+    .get<{exists: boolean}>(`${this.apiUrl}/check-name`, { params })
+    .pipe(map(response => response.exists));
   }
 }

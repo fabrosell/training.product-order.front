@@ -4,17 +4,23 @@ import {
     ChangeDetectionStrategy, 
     input, 
     output,
-    effect
+    effect,
+    inject
  } from '@angular/core';
 
  import {
+     AbstractControl,
+     AsyncValidatorFn,
     FormBuilder,
     FormControl,
     ReactiveFormsModule,
+    ValidationErrors,
     Validators
  } from '@angular/forms'
 
- import { Product } from '../../product.model';
+import { Product } from '../../product.model';
+import { catchError, debounceTime, first, map, Observable, of, switchMap } from 'rxjs';
+import { ProductService } from '../../product.service';
 
 interface ProductFormType {
     name: FormControl<string>,
@@ -31,14 +37,19 @@ interface ProductFormType {
 })
 export class ProductForm {
     private fb = new FormBuilder().nonNullable;
-
+    private productService = inject(ProductService);
+    
     productToEdit = input<Product | null>(null);
 
     save = output<Product>();
     cancel = output<void>();
 
     form = this.fb.group<ProductFormType>({
-        name: this.fb.control('', [Validators.required, Validators.minLength(3)]),
+        name: this.fb.control('', {
+            validators: [Validators.required, Validators.minLength(3)],
+            asyncValidators: [this.uniqueNameValidator()],
+            updateOn: 'blur'
+        }),
         price: this.fb.control(null, [Validators.required, Validators.min(0.01), Validators.max(10000000)])
     });
 
@@ -56,6 +67,24 @@ export class ProductForm {
 
     get name() { return this.form.get('name')}
     get price() { return this.form.get('price')}
+
+    private uniqueNameValidator(): AsyncValidatorFn {
+        return (control: AbstractControl): Observable<ValidationErrors | null > => {
+            if (!control.value)
+                return of(null);
+
+            return of (control.value).pipe(
+                debounceTime(500),
+                switchMap(name => {
+                    const excludeId = this.productToEdit()?.id;
+                    return this.productService.checkNameExists(name, excludeId);
+                }),
+                map(exists => (exists ? { nonUniqueName: true} : null)),
+                first(),
+                catchError(() => of(null))
+            );
+        }
+    }
 
     onSubmit(): void {
         if (this.form.invalid)
