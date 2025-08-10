@@ -1,1 +1,133 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.scss */
+
+// A modern, clean color palette
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$accent-color: #28a745;
+$background-color: #f8f9fa;
+$text-color: #343a40;
+$border-color: #dee2e6;
+$error-color: #dc3545;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  margin: 0;
+  padding: 20px;
+}
+
+// Basic form and input styling
+form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto 20px;
+}
+
+.form-field {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  box-sizing: border-box; // Ensures padding doesn't affect width
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+}
+
+.error {
+  color: $error-color;
+  font-size: 0.875em;
+  margin-top: 5px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+// Button styling
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+
+  &[type="submit"] {
+    background-color: $primary-color;
+    color: white;
+    &:disabled {
+      background-color: $secondary-color;
+      cursor: not-allowed;
+    }
+  }
+
+  &[type="button"] {
+    background-color: $secondary-color;
+    color: white;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+}
+
+// Table styling for product-list component
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden; // Ensures rounded corners on table
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 1px solid $border-color;
+}
+
+th {
+  background-color: $primary-color;
+  color: white;
+  font-weight: 600;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+// Action buttons in the table
+td button {
+  padding: 8px 12px;
+  margin-right: 5px;
+  &[color="red"] {
+    background-color: $error-color;
+    color: white;
+  }
+}

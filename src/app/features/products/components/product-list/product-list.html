@@ -1,21 +1,46 @@
-<h2>{{ title() }}</h2>
+<h2>Our Products</h2>
 
-@defer (on idle) {
-    @if (products().length > 0) {
-        <p>Total Products: {{ productCount() }}</p>
-        <ul>
-            @for (product of products(); track product.id) {
-                <li>
-                    {{ product.name }} - {{ product.price | number:'1.2-2'}}
-                </li>
-            }
+@if (showForm()) {
+  <app-product-form
+    [productToEdit]="selectedProduct()"
+    (save)="onFormSave($event)"
+    (cancel)="onFormCancel()"
+  />
+}
 
-        </ul>
-    } @else {
-        <p>No products were found.</p>
-    }
-} @placeholder {
-    <div class="placeholder">Product List will be shown here.</div>
-} @loading (minimum 500ms){
-    <p>Loading product list...</p>
+@if (isLoading()) {
+  <p>Loading products...</p>
+} @else {
+  <button (click)="onAdd()">Add New Product</button>
+
+  @if (products().length > 0)
+  {
+    <p class="product-count">Total Products: {{ productCount() }}</p>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of products(); track product.id) {
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.price | number:'1.2-2' }}</td>
+          <td>
+            <button (click)="onEdit(product)">Edit</button>
+            <button (click)="onDelete(product)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3">No products found.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 }

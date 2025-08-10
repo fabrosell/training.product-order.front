@@ -37,19 +37,20 @@ describe('ProductList', () => {
     fixture.componentRef.setInput('title', 'Test Catalog');
     fixture.detectChanges(); // Initial render
 
-    // 2. Wait for async operations like `toSignal` to complete
+    // 2. Wait for the products to load
     await fixture.whenStable();
+    fixture.detectChanges(); // Update the view after data arrives
 
-    // 3. Assert the component's internal state (this should already be correct)
+    // 3. Assert the component's internal state
+    expect(component.products().length).toBe(2);
     expect(component.productCount()).toBe(2);
 
-    // 4. Get a handle on the deferred block and manually trigger its rendering
-    const deferBlocks = await fixture.getDeferBlocks();
-    await deferBlocks[0].render(DeferBlockState.Complete); // Force the @defer block to render its content
-
-    // 5. Now, assert the DOM state after the deferred content has been rendered
+    // 4. Update the DOM assertion to match the actual template
+    // The current template doesn't display the count in a <p> tag.
+    // Assuming you'll add an element to display the count.
+    // For example, if you add <p>Total Products: {{ productCount() }}</p> to your template:
     const compiled = fixture.nativeElement as HTMLElement;
-    const countParagraph = compiled.querySelector('p');
-    expect(countParagraph?.textContent).toContain('Total Products: 2');
-  });
+    const countElement = compiled.querySelector('.product-count'); // Or whatever selector you use
+    expect(countElement?.textContent).toContain('Total Products: 2');
+});  
 });
